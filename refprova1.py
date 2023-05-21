@@ -5,7 +5,7 @@ class Lancamentos:
        
     
     def adicionar_lancamento(self, lancamento):
-        with open(self.nome_arquivo, 'a') as arquivo:
+        with open(self.nome_arquivo, 'a+') as arquivo:
             arquivo.write(str(lancamento) + '\n')
 
     def salvar_lancamentos(self, lancamentos):
@@ -109,15 +109,15 @@ class Salario(Lancamentos):
         self.adicionar_lancamento(self.linha)
 
     def alterar_salario(self):
-        ano = self.informar_inteiro('Informe o ano: ')
-        mes = self.informar_inteiro('Informe o mês: ')
-        novo_valor = self.informar_valor('Informe o novo salário: ')
-        self.alterar_lancamento(ano, mes, novo_valor)        
+        self.ano = self.informar_inteiro('Informe o ano: ')
+        self.mes = self.informar_inteiro('Informe o mês: ')
+        self.novo_valor = self.informar_valor('Informe o novo salário: ')
+        self.alterar_lancamento(self.ano, self.mes, self.novo_valor)        
 
     def excluir_salario(self):
-        ano = self.informar_inteiro('Informe o ano: ')
-        mes = self.informar_inteiro('Informe o mês: ')
-        self.excluir_lancamento(ano, mes)
+        self.ano = self.informar_inteiro('Informe o ano: ')
+        self.mes = self.informar_inteiro('Informe o mês: ')
+        self.excluir_lancamento(self.ano, self.mes)
 
     
 class Despesa(Lancamentos):
@@ -139,15 +139,15 @@ class Despesa(Lancamentos):
         self.adicionar_lancamento(self.linha)
 
     def alterar_despesa(self):
-        ano = self.informar_inteiro('Informe o ano: ')
-        mes = self.informar_inteiro('Informe o mês: ')
-        novo_valor = self.informar_valor('Informe a nova despesa: ')
-        self.alterar_lancamento(ano, mes, novo_valor)       
+        self.ano = self.informar_inteiro('Informe o ano: ')
+        self.mes = self.informar_inteiro('Informe o mês: ')
+        self.novo_valor = self.informar_valor('Informe a nova despesa: ')
+        self.alterar_lancamento(self.ano, self.mes, self.novo_valor)       
 
     def excluir_despesa(self):
-        ano = self.informar_inteiro('Informe o ano: ')
-        mes = self.informar_inteiro('Informe o mês: ')
-        self.excluir_lancamento(ano, mes)
+        self.ano = self.informar_inteiro('Informe o ano: ')
+        self.mes = self.informar_inteiro('Informe o mês: ')
+        self.excluir_lancamento(self.ano, self.mes)
 
 
 class Resultados(Lancamentos):
@@ -175,12 +175,60 @@ class Resultados(Lancamentos):
                 if int(registro[0]) == ano and int(registro[1]) == mes:
                     despesa += float(registro[2])
         
-        saldo = salario - despesa
-            
+        if despesa > salario:
+            print('Erro favor rever lancamento')
+        else:
+            saldo = salario-despesa 
+        return saldo   
+    
+
+def exibir_menu():
+    print("Menu:")
+    print("1. Incluir Salário")
+    print("2. Incluir Despesas")
+    print("3. Alterar Salário")
+    print("4. Alterar Despesas")
+    print("5. Excluir Salário")
+    print("6. Excluir Despesas")
+    print("7. Calcular Saldo")
+    print("8. Sair")
+
 meu_salario = Salario('salarios.txt')
-meu_salario.incluir_salario()
 minha_despesa = Despesa('despesa.txt')
-minha_despesa.incluir_despesas()
+meu_resultado = Resultados('lancamentos.txt')
+while True:
+    exibir_menu()
+    escolha = input("Digite o número da opção desejada: ")
+
+    if escolha == "1":
+        meu_salario.incluir_salario()
+        meu_salario.salvar_salario()
+    elif escolha == "2":
+        minha_despesa.incluir_despesas()
+        minha_despesa.salvar_despesa()
+    elif escolha == "3":
+        meu_salario.alterar_salario()
+        meu_salario.salvar_lancamentos()
+    elif escolha == "4":
+        minha_despesa.alterar_despesa()
+        minha_despesa.salvar_lancamentos()
+    elif escolha == "5":
+        meu_salario.excluir_salario()
+        meu_salario.salvar_lancamentos()
+    elif escolha == "6":
+        minha_despesa.excluir_despesa()
+        minha_despesa.salvar_lancamentos()
+    elif escolha == "7":
+        ano = meu_salario.informar_inteiro('Informe o ano: ')
+        mes = meu_salario.informar_inteiro('Informe o mês: ')
+        saldo = Resultados('lancamentos.txt').calcular_saldo(ano, mes)
+        print(f"Saldo: R${saldo}")
+    elif escolha == "8":
+        print("Saindo do programa...")
+        break
+    else:
+        print("Opção inválida! Digite um número válido do menu.")
+
 
 
 
